@@ -21,6 +21,7 @@
     --comic-red:#E23414;
     --cream:#F7F1E0;
     --purple:#3A0F73;
+    --ticker-h:38px;
   }
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
@@ -58,9 +59,46 @@
     background-position:0 0, 7px 7px;
   }
 
+  /* ---------- LEADERBOARD TICKER (ESPN-style scoreboard strip) ---------- */
+  .ticker-wrap{
+    position:sticky; top:0; z-index:60; height:var(--ticker-h);
+    display:flex; align-items:stretch;
+    background:#050507; border-bottom:3px solid var(--gold);
+  }
+  .ticker-label{
+    flex:0 0 auto; display:flex; align-items:center; gap:6px;
+    padding:0 16px; white-space:nowrap;
+    font-family:'Bangers', cursive; font-size:0.9rem; letter-spacing:0.03em;
+    color:var(--ink); background:var(--gold); border-right:3px solid var(--ink);
+  }
+  .ticker-viewport{ flex:1 1 auto; overflow:hidden; position:relative; }
+  .ticker-track{
+    position:absolute; top:0; left:0; height:100%;
+    display:flex; align-items:center; gap:36px; white-space:nowrap;
+    padding-left:24px;
+    animation: ticker-scroll 22s linear infinite;
+  }
+  .ticker-wrap:hover .ticker-track{ animation-play-state:paused; }
+  @keyframes ticker-scroll{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+  .ticker-item{
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'Baloo 2', sans-serif; font-weight:800; font-size:0.85rem;
+    color:var(--gold-pale);
+  }
+  .ticker-rank{ font-family:'JetBrains Mono', monospace; color:var(--gold); }
+  .ticker-score{ color:var(--sky-blue); }
+  .ticker-sep{ color:rgba(247,241,224,0.3); margin:0 2px; }
+  @media (max-width:600px){
+    .ticker-label{ font-size:0.78rem; padding:0 10px; }
+    .ticker-item{ font-size:0.78rem; }
+  }
+
   /* ---------- NAV ---------- */
   .nav{
-    position:sticky; top:0; z-index:50;
+    position:sticky; top:var(--ticker-h); z-index:50;
     background:rgba(10,23,48,0.92);
     backdrop-filter:blur(8px);
     border-bottom:3px solid var(--ink);
@@ -289,6 +327,15 @@
 </head>
 <body>
 
+<div class="ticker-wrap">
+  <div class="ticker-label">🏆 TOP 5</div>
+  <div class="ticker-viewport">
+    <div class="ticker-track" id="ticker-track">
+      <span class="ticker-item">Loading leaderboard…</span>
+    </div>
+  </div>
+</div>
+
 <nav class="nav">
   <div class="nav-inner">
     <a class="brand" href="#top">
@@ -512,6 +559,56 @@
     } catch (err) {
       console.warn("Live member count unavailable:", err);
     }
+  })();
+
+  // Reads leaderboard.json from THIS SAME SITE (the bot pushes it here
+  // directly via GitHub's API every 15 min) — same-origin, so none of the
+  // CORS/sandbox headaches from the two fetches above apply here at all.
+  // If the file doesn't exist yet (first deploy, before the bot's first
+  // push cycle) or fetch fails for any reason, the ticker falls back to a
+  // friendly placeholder instead of showing something broken.
+  (async () => {
+    const track = document.getElementById("ticker-track");
+    const escapeHtml = (str) => {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    };
+
+    let itemsHtml = [];
+    try {
+      const res = await fetch("./leaderboard.json", { cache: "no-store" });
+      if (!res.ok) throw new Error(`leaderboard.json returned ${res.status}`);
+      const data = await res.json();
+
+      if (Array.isArray(data.top5) && data.top5.length) {
+        const medals = ["🥇", "🥈", "🥉"];
+        itemsHtml = data.top5.map((p) => {
+          const rankLabel = p.rank <= 3 ? medals[p.rank - 1] : `#${p.rank}`;
+          const score = typeof p.score === "number" ? p.score.toLocaleString() : p.score;
+          return (
+            `<span class="ticker-item">` +
+            `<span class="ticker-rank">${rankLabel}</span> ${escapeHtml(String(p.name))} ` +
+            `<span class="ticker-score">${score} pts</span></span>` +
+            `<span class="ticker-sep">★</span>`
+          );
+        });
+      }
+    } catch (err) {
+      console.warn("Leaderboard ticker: falling back to placeholder —", err);
+    }
+
+    if (!itemsHtml.length) {
+      itemsHtml = [
+        `<span class="ticker-item">🏆 Be the first on the board — run <strong>/scanshowroom</strong> to climb!</span>` +
+        `<span class="ticker-sep">★</span>`,
+      ];
+    }
+
+    // Duplicate the item list once so the CSS animation (translateX -50%)
+    // loops seamlessly instead of snapping back to the start.
+    const html = itemsHtml.join("");
+    track.innerHTML = html + html;
   })();
 </script>
 
