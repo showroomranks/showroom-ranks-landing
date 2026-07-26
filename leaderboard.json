@@ -1,4 +1,20 @@
 {
-  "generated_at": null,
-  "top5": []
+  "generated_at": "2026-07-26T20:57:31.349015+00:00",
+  "top5": [
+    {
+      "rank": 1,
+      "name": "SharkBait \ud83e\udd88",
+      "score": 3145
+    },
+    {
+      "rank": 2,
+      "name": "Cleo",
+      "score": 2669
+    },
+    {
+      "rank": 3,
+      "name": "ShowRoom Ranks",
+      "score": 2665
+    }
+  ]
 }
