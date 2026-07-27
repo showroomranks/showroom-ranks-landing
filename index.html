@@ -146,9 +146,8 @@
     display:flex; align-items:flex-start; justify-content:center; gap:24px;
     max-width:1180px; margin:0 auto; position:relative; z-index:2; flex-wrap:wrap;
   }
-  .hero-flex > .hero-inner{ order:1; flex:1 1 auto; }
+  .hero-flex > .hero-inner{ order:2; flex:1 1 auto; }
   .side-panel{
-    order:2;
     width:230px; flex:0 0 230px;
     background:var(--cream); color:var(--ink);
     border:3px solid var(--ink); border-radius:14px;
@@ -161,6 +160,8 @@
   }
   .side-panel-hunt .side-panel-label{ color:var(--comic-red); }
   .side-panel-giveaway .side-panel-label{ color:var(--purple); }
+  .side-panel-hunt{ order:1; }
+  .side-panel-giveaway{ order:3; }
   .side-panel-empty{ font-size:0.85rem; color:var(--ink); opacity:0.6; margin:0; line-height:1.5; }
   .side-panel-item-name{ font-family:'Luckiest Guy', cursive; font-weight:400; font-size:1.1rem; margin:0 0 6px; }
   .side-panel-meta{
@@ -178,9 +179,33 @@
     border-top:2px dashed rgba(42,31,25,0.2);
   }
 
+  /* Boxes sit still in the hero row by default. This class only gets
+     added by JS once there's an actual active hunt/giveaway to show — at
+     that point the box detaches from the hero layout and follows the
+     viewport as the page scrolls, so it stays visible while browsing.
+     Below 1020px it's turned back off (see media query) since fixed
+     panels would just cover mobile content. */
+  .side-panel-floating{
+    position:fixed; top:112px; z-index:40;
+    max-height:calc(100vh - 140px); overflow-y:auto;
+    box-shadow:7px 7px 0 rgba(0,0,0,0.45);
+    animation: float-in .35s ease;
+  }
+  .side-panel-hunt.side-panel-floating{ left:24px; }
+  .side-panel-giveaway.side-panel-floating{ right:24px; }
+  @keyframes float-in{
+    from{ opacity:0; transform:translateY(-10px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
   @media (max-width:1020px){
     .side-panel{ width:100%; max-width:420px; margin-top:24px; }
     .hero-flex{ flex-direction:column; align-items:center; }
+    .side-panel-floating{
+      position:static; top:auto; left:auto; right:auto;
+      max-height:none; overflow-y:visible; box-shadow:5px 5px 0 rgba(0,0,0,0.4);
+      animation:none;
+    }
   }
 
   .hero-banner{
@@ -676,6 +701,7 @@
     const renderHuntPanel = (hunt) => {
       const body = document.getElementById("hunt-panel-body");
       huntEndsAt = hunt ? hunt.ends_at : null;
+      document.getElementById("hunt-panel").classList.toggle("side-panel-floating", !!hunt);
       if (!hunt) {
         body.innerHTML = `<p class="side-panel-empty">No hunt running right now — watch Discord for the next one!</p>`;
         return;
@@ -697,6 +723,7 @@
     const renderGiveawayPanel = (giveaway) => {
       const body = document.getElementById("giveaway-panel-body");
       giveawayEndsAt = giveaway ? giveaway.ends_at : null;
+      document.getElementById("giveaway-panel").classList.toggle("side-panel-floating", !!giveaway);
       if (!giveaway) {
         body.innerHTML = `<p class="side-panel-empty">No giveaway running right now — watch Discord for the next one!</p>`;
         return;
