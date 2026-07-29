@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-29T02:46:01.908139+00:00",
+  "generated_at": "2026-07-29T02:51:01.879640+00:00",
   "top5": [
     {
       "rank": 1,
@@ -17,6 +17,12 @@
       "score": 0
     }
   ],
-  "current_hunt": null,
+  "current_hunt": {
+    "item_name": "Chief Wiggum",
+    "category": "shields",
+    "points": 70,
+    "ends_at": "2026-07-31T02:47:36.916049+00:00",
+    "image_url": null
+  },
   "current_giveaway": null
 }
