@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-30T21:32:33.134362+00:00",
+  "generated_at": "2026-07-30T21:37:33.116370+00:00",
   "top5": [
     {
       "rank": 1,
@@ -22,19 +22,13 @@
       "score": 1238
     }
   ],
-  "current_hunt": {
-    "item_name": "Daffy Duck",
-    "category": "shields",
-    "points": 100,
-    "ends_at": "2026-08-01T19:12:08.689928+00:00",
-    "image_url": null
-  },
+  "current_hunt": null,
   "current_giveaway": null,
   "last_catch": {
-    "item_name": "marge",
-    "category": "dice",
-    "winner_name": "Cleo Bunny",
-    "found_at": "2026-07-29T02:24:22.906890+00:00",
+    "item_name": "Daffy Duck",
+    "category": "shields",
+    "winner_name": "studiosixty4",
+    "found_at": "2026-07-30T21:33:40.056577+00:00",
     "image_url": null
   }
 }
