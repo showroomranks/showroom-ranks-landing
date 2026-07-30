@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShowRoom Ranks — A MONOPOLY GO Collector Community</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Bangers&family=Baloo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#170D08;
+    --navy-deep:#1A2234;
+    --navy-mid:#1E385E;
+    --navy-panel:#223148;
+    --spot-blue:#3B6EA5;
+    --sky-blue:#8FB4C0;
+    --gold:#E8AD50;
+    --gold-pale:#FBD830;
+    --orange:#F08028;
+    --comic-red:#A53123;
+    --cream:#EADCAC;
+    --purple:#3D112B;
+    --sage:#7A9490;
+    --ticker-h:38px;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--navy-deep);
+    color:var(--cream);
+    font-family:'Baloo 2', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--gold); color:var(--ink); }
+  a{ color:inherit; }
+  img{ max-width:100%; display:block; }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+
+  /* comic halftone texture, used on dark sections */
+  .halftone{
+    background-image: radial-gradient(rgba(255,255,255,0.10) 1.4px, transparent 1.4px);
+    background-size: 16px 16px;
+  }
+  .halftone-gold{
+    background-image: radial-gradient(rgba(232,173,80,0.18) 1.6px, transparent 1.6px);
+    background-size: 14px 14px;
+  }
+
+  /* checkerboard strip, callback to the banner's floor */
+  .checker-strip{
+    height:14px;
+    background-image:
+      linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000),
+      linear-gradient(45deg, #000 25%, #fff 25%, #fff 75%, #000 75%, #000);
+    background-size:14px 14px;
+    background-position:0 0, 7px 7px;
+  }
+
+  /* ---------- LEADERBOARD TICKER (ESPN-style scoreboard strip) ---------- */
+  .ticker-wrap{
+    position:sticky; top:0; z-index:60; height:var(--ticker-h);
+    display:flex; align-items:stretch;
+    background:#170D08; border-bottom:3px solid var(--gold);
+  }
+  .ticker-label{
+    flex:0 0 auto; display:flex; align-items:center; gap:6px;
+    padding:0 16px; white-space:nowrap;
+    font-family:'Bangers', cursive; font-size:0.9rem; letter-spacing:0.03em;
+    color:var(--ink); background:var(--gold); border-right:3px solid var(--ink);
+  }
+  .ticker-viewport{ flex:1 1 auto; overflow:hidden; position:relative; }
+  .ticker-track{
+    position:absolute; top:0; left:0; height:100%;
+    display:flex; align-items:center; gap:36px; white-space:nowrap;
+    padding-left:24px;
+    animation: ticker-scroll 22s linear infinite;
+  }
+  .ticker-wrap:hover .ticker-track{ animation-play-state:paused; }
+  @keyframes ticker-scroll{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+  .ticker-item{
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'Baloo 2', sans-serif; font-weight:800; font-size:0.85rem;
+    color:var(--gold-pale);
+  }
+  .ticker-rank{ font-family:'JetBrains Mono', monospace; color:var(--gold); }
+  .ticker-score{ color:var(--sky-blue); }
+  .ticker-sep{ color:var(--sage); margin:0 2px; }
+  @media (max-width:600px){
+    .ticker-label{ font-size:0.78rem; padding:0 10px; }
+    .ticker-item{ font-size:0.78rem; }
+  }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky; top:var(--ticker-h); z-index:50;
+    background:rgba(26,34,52,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:3px solid var(--ink);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 32px; max-width:1180px; margin:0 auto;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .brand img{ width:40px; height:40px; border-radius:50%; }
+  .brand-word{ font-family:'Luckiest Guy', cursive; font-size:1.2rem; color:var(--gold); letter-spacing:0.01em;
+    -webkit-text-stroke:1.2px var(--ink); }
+  .nav-links{ display:flex; gap:26px; font-size:0.95rem; font-weight:700; }
+  .nav-links a{ text-decoration:none; color:var(--cream); opacity:0.85; transition:opacity .2s, color .2s; }
+  .nav-links a:hover{ opacity:1; color:var(--gold); }
+  .nav-cta{
+    background:var(--comic-red); color:#fff; padding:10px 22px; border-radius:999px;
+    font-weight:800; font-size:0.88rem; text-decoration:none; letter-spacing:0.01em;
+    border:2.5px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .nav-cta:hover{ transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink); }
+  .nav-cta:active{ transform:translate(1px,1px); box-shadow:1px 1px 0 var(--ink); }
+  @media (max-width:760px){ .nav-links{ display:none; } }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:56px 24px 46px;
+    text-align:center;
+    background:
+      radial-gradient(120% 70% at 50% 0%, #2A4A72 0%, var(--navy-mid) 45%, var(--navy-deep) 85%);
+    overflow:hidden;
+  }
+  .hero-beams{
+    position:absolute; inset:0; z-index:0; opacity:0.55; pointer-events:none;
+    background: repeating-conic-gradient(from 0deg at 50% -10%,
+      rgba(255,255,255,0.05) 0deg 8deg, transparent 8deg 20deg);
+  }
+  .hero-inner{ position:relative; z-index:2; max-width:820px; margin:0 auto; }
+
+  /* ---------- HERO FLEX: hunt panel | hero content | giveaway panel ---------- */
+  .hero-flex{
+    display:flex; align-items:flex-start; justify-content:center; gap:24px;
+    max-width:1180px; margin:0 auto; position:relative; z-index:2; flex-wrap:wrap;
+  }
+  .hero-flex > .hero-inner{ order:2; flex:1 1 auto; }
+  .side-panel{
+    width:230px; flex:0 0 230px;
+    background:var(--cream); color:var(--ink);
+    border:3px solid var(--ink); border-radius:14px;
+    padding:16px; margin-top:64px;
+    box-shadow:5px 5px 0 rgba(0,0,0,0.4);
+  }
+  .side-panel-label{
+    font-family:'Bangers', cursive; font-size:1.05rem; letter-spacing:0.03em;
+    margin-bottom:10px; padding-bottom:8px; border-bottom:2px dashed rgba(23,13,8,0.25);
+  }
+  .side-panel-hunt .side-panel-label{ color:var(--comic-red); }
+  .side-panel-giveaway .side-panel-label{ color:var(--purple); }
+  .side-panel-hunt{ order:1; }
+  .side-panel-giveaway{ order:3; }
+  .side-panel-empty{ font-size:0.85rem; color:var(--ink); opacity:0.6; margin:0; line-height:1.5; }
+  .side-panel-item-name{ font-family:'Luckiest Guy', cursive; font-weight:400; font-size:1.1rem; margin:0 0 6px; }
+  .side-panel-meta{
+    font-family:'JetBrains Mono', monospace; font-size:0.76rem; color:var(--purple);
+    margin:0 0 8px; font-weight:700;
+  }
+  .side-panel-img{
+    width:100%; aspect-ratio:1/1; object-fit:contain; background:#fff;
+    border-radius:8px; border:2px solid var(--ink); margin-bottom:10px; display:block;
+  }
+  .side-panel-desc{ font-size:0.82rem; line-height:1.5; opacity:0.85; margin:0 0 6px; }
+  .side-panel-countdown{
+    font-family:'JetBrains Mono', monospace; font-weight:700; font-size:0.78rem;
+    color:var(--comic-red); margin:8px 0 0; padding-top:8px;
+    border-top:2px dashed rgba(23,13,8,0.2);
+  }
+
+  /* Boxes sit still in the hero row by default. This class only gets
+     added by JS once there's an actual active hunt/giveaway to show — at
+     that point the box detaches from the hero layout and follows the
+     viewport as the page scrolls, so it stays visible while browsing.
+     Below 1020px it's turned back off (see media query) since fixed
+     panels would just cover mobile content. */
+  .side-panel-floating{
+    position:fixed; top:112px; z-index:40;
+    max-height:calc(100vh - 140px); overflow-y:auto;
+    box-shadow:7px 7px 0 rgba(0,0,0,0.45);
+    animation: float-in .35s ease;
+  }
+  .side-panel-hunt.side-panel-floating{ left:24px; }
+  .side-panel-giveaway.side-panel-floating{ right:24px; }
+  @keyframes float-in{
+    from{ opacity:0; transform:translateY(-10px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  @media (max-width:1020px){
+    .side-panel{ width:100%; max-width:420px; margin-top:24px; }
+    .hero-flex{ flex-direction:column; align-items:center; }
+    .side-panel-floating{
+      position:static; top:auto; left:auto; right:auto;
+      max-height:none; overflow-y:visible; box-shadow:5px 5px 0 rgba(0,0,0,0.4);
+      animation:none;
+    }
+  }
+
+  .hero-banner{
+    max-width:640px; margin:0 auto;
+    border-radius:18px;
+    border:4px solid var(--ink);
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.45);
+    opacity:0; transform:translateY(16px) scale(0.98);
+    animation: pop-in .7s cubic-bezier(.2,.8,.3,1) forwards;
+  }
+  @keyframes pop-in{ to{ opacity:1; transform:translateY(0) scale(1); } }
+
+  .eyebrow-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--gold); color:var(--ink); font-family:'Bangers', cursive;
+    font-size:1rem; letter-spacing:0.06em; padding:6px 18px; border-radius:999px;
+    border:2.5px solid var(--ink); box-shadow:3px 3px 0 var(--ink);
+    margin:26px 0 0;
+  }
+
+  .live-count-badge{
+    display:none; /* revealed by JS only once the fetch actually succeeds */
+    align-items:center; gap:8px;
+    background:var(--cream); color:var(--ink);
+    font-family:'Baloo 2', sans-serif; font-weight:700; font-size:0.9rem;
+    padding:7px 16px; border-radius:999px;
+    border:2.5px solid var(--ink); box-shadow:3px 3px 0 rgba(0,0,0,0.35);
+    margin:14px auto 0;
+  }
+  .live-dot{
+    width:9px; height:9px; border-radius:50%; background:#3DDC5A;
+    border:1.5px solid var(--ink);
+    animation: live-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes live-pulse{
+    0%, 100%{ opacity:1; transform:scale(1); }
+    50%{ opacity:0.55; transform:scale(0.8); }
+  }
+
+  .tagline{
+    max-width:600px; margin:22px auto 0; font-size:1.15rem; line-height:1.55;
+    color:var(--cream); font-weight:600;
+  }
+  .tagline strong{ color:var(--gold-pale); font-weight:800; }
+
+  .cta-row{ display:flex; gap:16px; justify-content:center; margin-top:30px; flex-wrap:wrap; }
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:16px 30px; border-radius:14px; font-family:'Luckiest Guy', cursive;
+    font-size:1.15rem; letter-spacing:0.01em; text-decoration:none;
+    border:3px solid var(--ink); transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn-primary{
+    background:linear-gradient(180deg, var(--gold-pale), var(--orange));
+    color:var(--ink);
+    box-shadow:5px 5px 0 var(--ink);
+  }
+  .btn-primary:hover{ transform:translate(-2px,-2px); box-shadow:7px 7px 0 var(--ink); }
+  .btn-primary:active{ transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
+  .btn-ghost{
+    background:var(--navy-panel); color:var(--cream);
+    box-shadow:5px 5px 0 rgba(0,0,0,0.4);
+  }
+  .btn-ghost:hover{ transform:translate(-2px,-2px); box-shadow:7px 7px 0 rgba(0,0,0,0.4); }
+  .btn svg{ width:20px; height:20px; }
+
+  /* ---------- STAT SHELF ---------- */
+  .stat-shelf{
+    margin:52px auto 0; max-width:760px;
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+  }
+  .stat-cell{
+    background:var(--cream); border:3px solid var(--ink); border-radius:14px;
+    padding:18px 10px; text-align:center;
+    box-shadow:4px 4px 0 rgba(0,0,0,0.4);
+  }
+  .stat-dome{ width:30px; height:30px; margin:0 auto 6px; }
+  .stat-num{
+    font-family:'JetBrains Mono', monospace; font-weight:700; font-size:1.25rem; color:var(--purple);
+  }
+  .stat-label{
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink);
+    font-weight:700; margin-top:4px; opacity:0.75;
+  }
+  @media (max-width:720px){ .stat-shelf{ grid-template-columns:repeat(3,1fr); gap:8px; } .stat-num{ font-size:1.05rem; } }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding:88px 0; position:relative; }
+  .section-head{ text-align:center; max-width:640px; margin:0 auto 50px; }
+  .section-eyebrow{
+    font-family:'Bangers', cursive; font-size:1.05rem; letter-spacing:0.08em;
+    color:var(--orange); margin-bottom:6px;
+  }
+  .section-title{
+    font-family:'Luckiest Guy', cursive; font-weight:400; font-size:clamp(1.8rem, 4vw, 2.5rem);
+    margin:0 0 14px; color:var(--gold-pale);
+    -webkit-text-stroke:1.5px var(--ink);
+  }
+  .section-desc{ color:var(--cream); font-size:1.02rem; line-height:1.6; opacity:0.9; }
+
+  #features{ background:var(--navy-panel); }
+
+  /* ---------- FEATURE COMIC PANELS ---------- */
+  .feature-grid{
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:22px;
+  }
+  @media (max-width:820px){ .feature-grid{ grid-template-columns:1fr; } }
+
+  .panel-card{
+    background:var(--cream);
+    border:3.5px solid var(--ink);
+    border-radius:16px;
+    padding:26px 24px;
+    position:relative;
+    color:var(--ink);
+    box-shadow:6px 6px 0 rgba(0,0,0,0.45);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .panel-card:hover{ transform:translate(-3px,-3px); box-shadow:9px 9px 0 rgba(0,0,0,0.45); }
+  .dome-icon{ width:48px; height:48px; margin-bottom:14px; }
+  .feature-title{ font-family:'Luckiest Guy', cursive; font-weight:400; font-size:1.25rem; margin:0 0 8px; color:var(--purple); }
+  .feature-cmd{
+    font-family:'JetBrains Mono', monospace; font-size:0.76rem; background:var(--gold);
+    color:var(--ink); padding:3px 9px; border-radius:6px; display:inline-block; margin-bottom:10px; font-weight:700;
+    border:1.5px solid var(--ink);
+  }
+  .feature-desc{ color:#2A1B12; font-size:0.95rem; line-height:1.55; margin:0; opacity:0.85; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{ display:flex; flex-direction:column; gap:0; max-width:720px; margin:0 auto; }
+  .step{
+    display:grid; grid-template-columns:56px 1fr; gap:20px; padding:22px 0;
+    border-bottom:2px dashed rgba(122,148,144,0.35);
+  }
+  .step:last-child{ border-bottom:none; }
+  .step-burst{
+    width:48px; height:48px; border-radius:50%;
+    background:var(--comic-red); border:3px solid var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Luckiest Guy', cursive; font-size:1.3rem; color:#fff;
+    box-shadow:3px 3px 0 rgba(0,0,0,0.4);
+  }
+  .step-title{ font-weight:800; font-size:1.08rem; margin:0 0 6px; color:var(--gold-pale); }
+  .step-desc{ color:var(--cream); font-size:0.95rem; line-height:1.55; margin:0; opacity:0.85; }
+
+  /* ---------- ABOUT (purple panel, from the logo) ---------- */
+  .about{
+    background: radial-gradient(120% 100% at 50% 0%, var(--purple), #2A0F1F 70%);
+    border-top:4px solid var(--ink); border-bottom:4px solid var(--ink);
+  }
+  .about .wrap{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:44px; align-items:center; }
+  @media (max-width:820px){ .about .wrap{ grid-template-columns:1fr; } }
+  .about-title{ font-family:'Luckiest Guy', cursive; font-weight:400; font-size:1.8rem; margin:0 0 16px; color:var(--gold); }
+  .about-text{ color:var(--cream); font-size:1rem; line-height:1.7; opacity:0.92; }
+  .about-card{
+    background:var(--cream); border:3px solid var(--ink); border-radius:16px; padding:26px;
+    box-shadow:6px 6px 0 rgba(0,0,0,0.4); color:var(--ink);
+  }
+  .about-card h4{ font-family:'Bangers', cursive; font-size:1.05rem; letter-spacing:0.04em; margin:0 0 14px; color:var(--comic-red); }
+  .about-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:11px; font-size:0.92rem; }
+  .about-list li{ display:flex; gap:10px; align-items:flex-start; opacity:0.85; }
+  .about-list li::before{ content:"★"; color:var(--gold); font-size:0.8rem; margin-top:3px; }
+
+  /* ---------- FINAL CTA ---------- */
+  .final-cta{ text-align:center; padding:100px 32px; background:var(--navy-deep); }
+  .final-panel{
+    max-width:640px; margin:0 auto; background:var(--navy-panel); border:4px solid var(--ink);
+    border-radius:24px; padding:48px 32px; position:relative; overflow:hidden;
+    box-shadow:8px 8px 0 rgba(0,0,0,0.4);
+  }
+  .final-logo{ width:110px; height:110px; margin:0 auto 18px; }
+  .final-title{ font-family:'Luckiest Guy', cursive; font-weight:400; color:var(--gold-pale); font-size:clamp(1.6rem,4vw,2.2rem); margin:0 0 12px;
+    -webkit-text-stroke:1.4px var(--ink); }
+  .final-desc{ color:var(--cream); font-size:1rem; margin-bottom:26px; opacity:0.9; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ padding:36px 32px 48px; text-align:center; background:var(--navy-deep); }
+  .foot-note{ font-size:0.8rem; color:var(--cream); opacity:0.65; line-height:1.7; max-width:640px; margin:16px auto 0; }
+  .foot-brand{ font-family:'Luckiest Guy', cursive; color:var(--gold); font-size:1.1rem; }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-banner{ animation:none; opacity:1; transform:none; }
+    *{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ticker-wrap">
+  <div class="ticker-label">🏆 TOP 5</div>
+  <div class="ticker-viewport">
+    <div class="ticker-track" id="ticker-track">
+      <span class="ticker-item">Loading leaderboard…</span>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <img src="logo.png" alt="ShowRoom Ranks logo">
+      <span class="brand-word">SHOWROOM RANKS</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#about">About</a>
+    </div>
+    <a class="nav-cta" href="#join">Join Server</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-beams"></div>
+  <div class="hero-flex">
+
+  <aside class="side-panel side-panel-hunt" id="hunt-panel">
+    <div class="side-panel-label">🔍 Now Hunting</div>
+    <div class="side-panel-body" id="hunt-panel-body">
+      <p class="side-panel-empty">Checking for an active hunt…</p>
+    </div>
+  </aside>
+
+  <div class="hero-inner">
+    <img class="hero-banner" src="banner.png" alt="Showroom Ranks">
+
+    <div class="eyebrow-badge">★ A MONOPOLY GO Collector Community ★</div>
+
+    <div class="live-count-badge" id="live-count-badge">
+      <span class="live-dot"></span>
+      <span><span id="live-count-online">—</span> collectors online right now</span>
+    </div>
+
+    <p class="tagline">
+      Every dice, shield, and token you've unlocked — ranked, tracked, and shown off.
+      <strong>ShowRoom Ranks</strong> turns your MONOPOLY GO showroom into a living leaderboard,
+      right inside Discord.
+    </p>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#join" id="hero-join">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.076.076 0 0 0-.04.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.028 19.876 19.876 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.418 2.157-2.418 1.211 0 2.176 1.094 2.157 2.418 0 1.334-.946 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.418 2.157-2.418 1.211 0 2.176 1.094 2.157 2.418 0 1.334-.946 2.419-2.157 2.419z"/></svg>
+        Join the Discord
+      </a>
+      <a class="btn btn-ghost" href="#features">See what it tracks</a>
+    </div>
+
+    <div class="stat-shelf">
+      <div class="stat-cell">
+        <svg class="stat-dome" viewBox="0 0 48 48"><path d="M12 30 V38 H36 V30" fill="none" stroke="#170D08" stroke-width="2.5"/><path d="M12 30 C12 16 36 16 36 30 Z" fill="#8FB4C0" stroke="#170D08" stroke-width="2.5"/><rect x="8" y="38" width="32" height="5" rx="1.5" fill="#E8AD50" stroke="#170D08" stroke-width="2.5"/></svg>
+        <div class="stat-num">40/183</div><div class="stat-label">Shields</div>
+      </div>
+      <div class="stat-cell">
+        <svg class="stat-dome" viewBox="0 0 48 48"><path d="M12 30 V38 H36 V30" fill="none" stroke="#170D08" stroke-width="2.5"/><path d="M12 30 C12 16 36 16 36 30 Z" fill="#8FB4C0" stroke="#170D08" stroke-width="2.5"/><rect x="8" y="38" width="32" height="5" rx="1.5" fill="#E8AD50" stroke="#170D08" stroke-width="2.5"/></svg>
+        <div class="stat-num">39/219</div><div class="stat-label">Tokens</div>
+      </div>
+      <div class="stat-cell">
+        <svg class="stat-dome" viewBox="0 0 48 48"><path d="M12 30 V38 H36 V30" fill="none" stroke="#170D08" stroke-width="2.5"/><path d="M12 30 C12 16 36 16 36 30 Z" fill="#8FB4C0" stroke="#170D08" stroke-width="2.5"/><rect x="8" y="38" width="32" height="5" rx="1.5" fill="#E8AD50" stroke="#170D08" stroke-width="2.5"/></svg>
+        <div class="stat-num">31/67</div><div class="stat-label">Dice</div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="side-panel side-panel-giveaway" id="giveaway-panel">
+    <div class="side-panel-label">🎁 Active Giveaway</div>
+    <div class="side-panel-body" id="giveaway-panel-body">
+      <p class="side-panel-empty">Checking for a giveaway…</p>
+    </div>
+  </aside>
+
+  </div>
+</header>
+
+<div class="checker-strip"></div>
+
+<section id="features" class="halftone-gold">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="section-eyebrow">POW! The bot</p>
+      <h2 class="section-title">A showroom that keeps score</h2>
+      <p class="section-desc">ShowRoom Ranks watches your collection the way a tycoon would — and gives your server a leaderboard to argue over.</p>
+    </div>
+
+    <div class="feature-grid">
+
+      <div class="panel-card">
+        <svg class="dome-icon" viewBox="0 0 48 48"><path d="M12 30 V38 H36 V30" fill="none" stroke="#170D08" stroke-width="2.5"/><path d="M12 30 C12 16 36 16 36 30 Z" fill="#FBD830" stroke="#170D08" stroke-width="2.5"/><rect x="8" y="38" width="32" height="5" rx="1.5" fill="#3D112B" stroke="#170D08" stroke-width="2.5"/></svg>
+        <h3 class="feature-title">Showroom Leaderboard</h3>
+        <p class="feature-desc">Every member's dice, shield, and token count is ranked server-wide, so everyone can see who's really building out their showroom — not just who says they are.</p>
+      </div>
+
+      <div class="panel-card">
+        <svg class="dome-icon" viewBox="0 0 48 48"><path d="M12 30 V38 H36 V30" fill="none" stroke="#170D08" stroke-width="2.5"/><path d="M12 30 C12 16 36 16 36 30 Z" fill="#F08028" stroke="#170D08" stroke-width="2.5"/><rect x="8" y="38" width="32" height="5" rx="1.5" fill="#3D112B" stroke="#170D08" stroke-width="2.5"/></svg>
+        <h3 class="feature-title">Team Scavenger Hunts</h3>
+        <span class="feature-cmd">/founditem</span>
+        <p class="feature-desc">During live hunts, submit what you find and the bot verifies it, then archives it as permanent reference art for the whole community to browse later.</p>
+      </div>
+
+      <div class="panel-card">
+        <svg class="dome-icon" viewBox="0 0 48 48"><path d="M12 30 V38 H36 V30" fill="none" stroke="#170D08" stroke-width="2.5"/><path d="M12 30 C12 16 36 16 36 30 Z" fill="#8FB4C0" stroke="#170D08" stroke-width="2.5"/><rect x="8" y="38" width="32" height="5" rx="1.5" fill="#3D112B" stroke="#170D08" stroke-width="2.5"/></svg>
+        <h3 class="feature-title">Dice Scanner</h3>
+        <span class="feature-cmd">/scandice</span>
+        <p class="feature-desc">Screenshot your dice screen and the bot reads it for you — vision-assisted counting with automatic validation, no manual tallying required.</p>
+      </div>
+
+      <div class="panel-card">
+        <svg class="dome-icon" viewBox="0 0 48 48"><path d="M12 30 V38 H36 V30" fill="none" stroke="#170D08" stroke-width="2.5"/><path d="M12 30 C12 16 36 16 36 30 Z" fill="#A53123" stroke="#170D08" stroke-width="2.5"/><rect x="8" y="38" width="32" height="5" rx="1.5" fill="#3D112B" stroke="#170D08" stroke-width="2.5"/></svg>
+        <h3 class="feature-title">Giveaways</h3>
+        <span class="feature-cmd">/entergiveaway</span>
+        <p class="feature-desc">Real prizes, drawn fair and square — enter with one command, and the bot handles tracking every entry until a winner's picked.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="section-eyebrow">Getting started</p>
+      <h2 class="section-title">Four steps to the leaderboard</h2>
+      <p class="section-desc">No spreadsheets, no screenshots buried in a group chat. Just join and start showing off.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-burst">1</div>
+        <div>
+          <p class="step-title">Join the server</p>
+          <p class="step-desc">Hop into the ShowRoom Ranks Discord — free, open to any MONOPOLY GO tycoon.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-burst">2</div>
+        <div>
+          <p class="step-title">Set up your profile</p>
+          <p class="step-desc">Link your in-game name so your finds show up under the right name on the leaderboard.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-burst">3</div>
+        <div>
+          <p class="step-title">Log your showroom</p>
+          <p class="step-desc">Submit your dice, shield, and token counts — by screenshot or command, whichever's faster.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-burst">4</div>
+        <div>
+          <p class="step-title">Climb, hunt, repeat</p>
+          <p class="step-desc">Watch your rank move, jump into team scavenger hunts, and keep your showroom current every season.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="wrap">
+    <div>
+      <h2 class="about-title">Built by collectors, for collectors</h2>
+      <p class="about-text">
+        ShowRoom Ranks started as one server's way of keeping score. It's grown into a proper
+        collection tracker — a validated catalog, a live leaderboard, and a community that actually
+        knows the game's scoring quirks better than any spreadsheet does.
+      </p>
+    </div>
+    <div class="about-card">
+      <h4>Good to know</h4>
+      <ul class="about-list">
+        <li>Fan-run — not affiliated with, endorsed by, or sponsored by Scopely or Hasbro</li>
+        <li>MONOPOLY is a trademark of Hasbro; MONOPOLY GO! is published by Scopely</li>
+        <li>Catalog data is community-sourced and reviewed by hand for accuracy</li>
+        <li>Free to join — the leaderboard and hunts are open to every member</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta" id="join">
+  <div class="final-panel">
+    <img class="final-logo" src="logo.png" alt="ShowRoom Ranks logo">
+    <h2 class="final-title">Your showroom is waiting to be ranked</h2>
+    <p class="final-desc">Join the server, log your first count, and see where you land.</p>
+    <a class="btn btn-primary" href="#" id="final-join">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.076.076 0 0 0-.04.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.028 19.876 19.876 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.418 2.157-2.418 1.211 0 2.176 1.094 2.157 2.418 0 1.334-.946 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.418 2.157-2.418 1.211 0 2.176 1.094 2.157 2.418 0 1.334-.946 2.419-2.157 2.419z"/></svg>
+      Join ShowRoom Ranks
+    </a>
+  </div>
+</section>
+
+<div class="checker-strip"></div>
+
+<footer>
+  <div class="foot-brand">SHOWROOM RANKS</div>
+  <p class="foot-note">
+    ShowRoom Ranks is an independent fan project built by players. It is not affiliated with, endorsed by,
+    or sponsored by Scopely or Hasbro. MONOPOLY, MONOPOLY GO!, and all related logos are trademarks of
+    Hasbro and Scopely respectively, used here only in reference.
+  </p>
+</footer>
+
+<script>
+  const INVITE_CODE = "A47bWhFg9";
+  const INVITE_URL = `https://discord.gg/${INVITE_CODE}`;
+  document.querySelectorAll('#hero-join, #final-join, .nav-cta').forEach(el => {
+    el.setAttribute('href', INVITE_URL);
+    el.setAttribute('target', '_blank');
+    el.setAttribute('rel', 'noopener noreferrer');
+  });
+
+  // The general Discord API (discord.com/api/v10/...) doesn't send CORS
+  // headers, so a browser can't read its response directly — that's what
+  // caused "Failed to fetch" before. The Widget JSON endpoint is a
+  // SEPARATE, purpose-built endpoint meant to be embedded on outside
+  // websites, so it does send CORS headers. Tradeoff: it only reports
+  // ONLINE member count (presence_count), not total registered members —
+  // Discord doesn't expose exact total membership to an unauthenticated
+  // browser request at all, with or without CORS.
+  //
+  // Requires: Server Settings > Widget > "Enable Server Widget" turned ON.
+  // If it's off, this endpoint 404s and the badge just stays hidden.
+  const GUILD_ID = "1520935742749020160";
+
+  (async () => {
+    try {
+      const res = await fetch(`https://discord.com/api/guilds/${GUILD_ID}/widget.json`);
+      if (!res.ok) throw new Error(`Widget endpoint returned ${res.status} — is Server Widget enabled?`);
+      const data = await res.json();
+
+      const online = data.presence_count;
+      if (typeof online !== "number") throw new Error("No presence_count in widget response");
+
+      document.getElementById("live-count-online").textContent = online.toLocaleString();
+      document.getElementById("live-count-badge").style.display = "inline-flex";
+    } catch (err) {
+      console.warn("Live member count unavailable:", err);
+    }
+  })();
+
+  // Reads leaderboard.json from THIS SAME SITE (the bot pushes it here
+  // directly via GitHub's API every 15 min) — same-origin, so none of the
+  // CORS/sandbox headaches from the two fetches above apply here at all.
+  // If the file doesn't exist yet (first deploy, before the bot's first
+  // push cycle) or fetch fails for any reason, the ticker falls back to a
+  // friendly placeholder instead of showing something broken.
+  (async () => {
+    const track = document.getElementById("ticker-track");
+    const escapeHtml = (str) => {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    };
+
+    const CATEGORY_LABELS = { dice: "Dice", shields: "Shield", tokens: "Token", emojis: "Emoji" };
+
+    // Tracks the two end timestamps so a single interval can keep both
+    // countdowns ticking without re-fetching leaderboard.json — the
+    // countdown just counts down locally against the real clock.
+    let huntEndsAt = null;
+    let giveawayEndsAt = null;
+
+    const formatCountdown = (endsAtIso) => {
+      if (!endsAtIso) return null;
+      const end = new Date(endsAtIso).getTime();
+      if (Number.isNaN(end)) return null;
+      const diffMs = end - Date.now();
+      if (diffMs <= 0) return "Ending any moment ⏳";
+      const totalMinutes = Math.floor(diffMs / 60000);
+      const days = Math.floor(totalMinutes / 1440);
+      const hours = Math.floor((totalMinutes % 1440) / 60);
+      const minutes = totalMinutes % 60;
+      if (days > 0) return `⏳ ${days}d ${hours}h left`;
+      if (hours > 0) return `⏳ ${hours}h ${minutes}m left`;
+      return `⏳ ${minutes}m left`;
+    };
+
+    const updateCountdowns = () => {
+      const huntEl = document.getElementById("hunt-panel-countdown");
+      if (huntEl) {
+        const text = formatCountdown(huntEndsAt);
+        if (text) huntEl.textContent = text;
+      }
+      const giveawayEl = document.getElementById("giveaway-panel-countdown");
+      if (giveawayEl) {
+        const text = formatCountdown(giveawayEndsAt);
+        if (text) giveawayEl.textContent = text;
+      }
+    };
+
+    // Renders the "Now Hunting" panel from current_hunt (or null if no
+    // hunt is active — that's a normal state, not an error).
+    const renderHuntPanel = (hunt) => {
+      const body = document.getElementById("hunt-panel-body");
+      huntEndsAt = hunt ? hunt.ends_at : null;
+      document.getElementById("hunt-panel").classList.toggle("side-panel-floating", !!hunt);
+      if (!hunt) {
+        body.innerHTML = `<p class="side-panel-empty">No hunt running right now — watch Discord for the next one!</p>`;
+        return;
+      }
+      const catLabel = CATEGORY_LABELS[hunt.category] || hunt.category;
+      const img = hunt.image_url
+        ? `<img class="side-panel-img" src="${hunt.image_url}" alt="${escapeHtml(String(hunt.item_name))}">`
+        : "";
+      const countdown = formatCountdown(hunt.ends_at);
+      body.innerHTML =
+        img +
+        `<p class="side-panel-item-name">${escapeHtml(String(hunt.item_name))}</p>` +
+        `<p class="side-panel-meta">${escapeHtml(String(catLabel))} · ${escapeHtml(String(hunt.points))} pts</p>` +
+        `<p class="side-panel-desc">Find it and submit with <strong>/founditem</strong> before it's gone!</p>` +
+        (countdown ? `<p class="side-panel-countdown" id="hunt-panel-countdown">${countdown}</p>` : "");
+    };
+
+    // Renders the "Active Giveaway" panel from current_giveaway (or null).
+    const renderGiveawayPanel = (giveaway) => {
+      const body = document.getElementById("giveaway-panel-body");
+      giveawayEndsAt = giveaway ? giveaway.ends_at : null;
+      document.getElementById("giveaway-panel").classList.toggle("side-panel-floating", !!giveaway);
+      if (!giveaway) {
+        body.innerHTML = `<p class="side-panel-empty">No giveaway running right now — watch Discord for the next one!</p>`;
+        return;
+      }
+      const reqLine = giveaway.requirements
+        ? `<p class="side-panel-desc">${escapeHtml(String(giveaway.requirements))}</p>`
+        : "";
+      const countdown = formatCountdown(giveaway.ends_at);
+      body.innerHTML =
+        `<p class="side-panel-item-name">${escapeHtml(String(giveaway.name))}</p>` +
+        reqLine +
+        `<p class="side-panel-desc">Enter in Discord before it ends!</p>` +
+        (countdown ? `<p class="side-panel-countdown" id="giveaway-panel-countdown">${countdown}</p>` : "");
+    };
+
+    let itemsHtml = [];
+    try {
+      const res = await fetch("./leaderboard.json", { cache: "no-store" });
+      if (!res.ok) throw new Error(`leaderboard.json returned ${res.status}`);
+      const data = await res.json();
+
+      if (Array.isArray(data.top5) && data.top5.length) {
+        const medals = ["🥇", "🥈", "🥉"];
+        itemsHtml = data.top5.map((p) => {
+          const rankLabel = p.rank <= 3 ? medals[p.rank - 1] : `#${p.rank}`;
+          const score = typeof p.score === "number" ? p.score.toLocaleString() : p.score;
+          return (
+            `<span class="ticker-item">` +
+            `<span class="ticker-rank">${rankLabel}</span> ${escapeHtml(String(p.name))} ` +
+            `<span class="ticker-score">${score} pts</span></span>` +
+            `<span class="ticker-sep">★</span>`
+          );
+        });
+      }
+
+      // current_hunt / current_giveaway are legitimately null when nothing's
+      // active — renderHuntPanel/renderGiveawayPanel treat that as a normal
+      // state, not an error, so this call is safe either way.
+      renderHuntPanel(data.current_hunt || null);
+      renderGiveawayPanel(data.current_giveaway || null);
+    } catch (err) {
+      console.warn("Leaderboard ticker: falling back to placeholder —", err);
+      // The fetch itself failed (not just "nothing active") — show a
+      // distinct message so it's not confused with "no hunt right now".
+      document.getElementById("hunt-panel-body").innerHTML =
+        `<p class="side-panel-empty">Couldn't load right now — check back soon.</p>`;
+      document.getElementById("giveaway-panel-body").innerHTML =
+        `<p class="side-panel-empty">Couldn't load right now — check back soon.</p>`;
+    }
+
+    if (!itemsHtml.length) {
+      itemsHtml = [
+        `<span class="ticker-item">🏆 Be the first on the board — run <strong>/scanshowroom</strong> to climb!</span>` +
+        `<span class="ticker-sep">★</span>`,
+      ];
+    }
+
+    // Duplicate the item list once so the CSS animation (translateX -50%)
+    // loops seamlessly instead of snapping back to the start.
+    const html = itemsHtml.join("");
+    track.innerHTML = html + html;
+
+    // Countdowns tick down against the real clock — no need to re-fetch
+    // leaderboard.json for this, just recompute the display text.
+    updateCountdowns();
+    setInterval(updateCountdowns, 30000);
+  })();
+</script>
+
+</body>
+</html>
