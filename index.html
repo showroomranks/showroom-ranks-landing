@@ -212,14 +212,35 @@
      panels would just cover mobile content. */
   .side-panel-floating{
     position:fixed; top:112px; z-index:40;
+    width:230px;                       /* was missing — without this, width:100% from
+                                           .side-panel resolves against the VIEWPORT once
+                                           position:fixed kicks in, stretching each floating
+                                           panel to full page width instead of its intended
+                                           230px grid-column size. That's the actual bug
+                                           behind both "page looks off-center" and the boxes
+                                           fully covering each other/the content when both
+                                           are floating at once. */
     max-height:calc(100vh - 140px); overflow-y:auto;
     background:rgba(234,220,172,0.88); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
     box-shadow:7px 7px 0 rgba(0,0,0,0.45);
     animation: float-in .35s ease;
-    transition: background .2s ease;
+    transition: background .2s ease, opacity .2s ease;
   }
   .side-panel-hunt.side-panel-floating{ left:24px; }
   .side-panel-giveaway.side-panel-floating{ right:24px; }
+  /* Added by JS only when BOTH panels are floating AND their boxes
+     actually overlap on screen (narrow-ish desktop widths where 230px +
+     230px + margins doesn't quite fit two panels beside the centered
+     content) — fades them so whichever is underneath is still readable
+     instead of one fully blotting out the other. */
+  .side-panel-floating.side-panel-overlapping{
+    background:rgba(234,220,172,0.4);
+    opacity:0.55;
+  }
+  .side-panel-floating.side-panel-overlapping:hover{
+    background:rgba(234,220,172,0.88);
+    opacity:1;
+  }
   @keyframes float-in{
     from{ opacity:0; transform:translateY(-10px); }
     to{ opacity:1; transform:translateY(0); }
@@ -779,6 +800,32 @@
         (countdown ? `<p class="side-panel-countdown" id="giveaway-panel-countdown">${countdown}</p>` : "");
     };
 
+    // Only meaningful once BOTH panels are floating — compares their real
+    // on-screen bounding boxes (not viewport-width math, since panel
+    // height/position can shift with content) and fades both if they
+    // actually overlap. Runs after every render pass and on resize, since
+    // resizing the window can start/stop an overlap without any new data.
+    const checkPanelOverlap = () => {
+      const huntPanel = document.getElementById("hunt-panel");
+      const giveawayPanel = document.getElementById("giveaway-panel");
+      const bothFloating =
+        huntPanel.classList.contains("side-panel-floating") &&
+        giveawayPanel.classList.contains("side-panel-floating");
+
+      if (!bothFloating) {
+        huntPanel.classList.remove("side-panel-overlapping");
+        giveawayPanel.classList.remove("side-panel-overlapping");
+        return;
+      }
+
+      const a = huntPanel.getBoundingClientRect();
+      const b = giveawayPanel.getBoundingClientRect();
+      const overlapping = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+
+      huntPanel.classList.toggle("side-panel-overlapping", overlapping);
+      giveawayPanel.classList.toggle("side-panel-overlapping", overlapping);
+    };
+
     // Renders the "Last Catch" trophy card from last_catch (or null if
     // nobody's ever won a hunt yet). Because the backend always reports
     // the MOST RECENT found hunt regardless of what's active now, this
@@ -830,6 +877,7 @@
         renderHuntPanel(data.current_hunt || null);
         renderGiveawayPanel(data.current_giveaway || null);
         renderLastCatch(data.last_catch || null);
+        checkPanelOverlap();
       } catch (err) {
         console.warn("Leaderboard ticker: falling back to placeholder —", err);
         // The fetch itself failed (not just "nothing active") — show a
@@ -858,6 +906,7 @@
     loadLiveData();
     setInterval(loadLiveData, 60000);       // re-fetch real data every minute
     setInterval(updateCountdowns, 15000);   // tick the displayed text in between
+    window.addEventListener("resize", checkPanelOverlap);
   })();
 </script>
 
