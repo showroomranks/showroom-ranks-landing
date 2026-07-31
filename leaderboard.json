@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-31T19:06:32.632303+00:00",
+  "generated_at": "2026-07-31T19:11:32.642351+00:00",
   "top5": [
     {
       "rank": 1,
@@ -30,10 +30,10 @@
   "current_hunt": null,
   "current_giveaway": null,
   "last_catch": {
-    "item_name": "Mr.Sparkle",
-    "category": "dice",
+    "item_name": "Storm",
+    "category": "tokens",
     "winner_name": "Cleo Le Cat",
-    "found_at": "2026-07-31T18:56:11.207486+00:00",
+    "found_at": "2026-07-31T19:10:00.254035+00:00",
     "image_url": null
   }
 }
