@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-31T16:36:32.635631+00:00",
+  "generated_at": "2026-07-31T16:41:32.647194+00:00",
   "top5": [
     {
       "rank": 1,
@@ -27,19 +27,13 @@
       "score": 1109
     }
   ],
-  "current_hunt": {
-    "item_name": "Friendly Stache",
-    "category": "shields",
-    "points": 100,
-    "ends_at": "2026-08-01T16:07:34.321849+00:00",
-    "image_url": null
-  },
+  "current_hunt": null,
   "current_giveaway": null,
   "last_catch": {
-    "item_name": "Daffy Duck",
+    "item_name": "Friendly Stache",
     "category": "shields",
-    "winner_name": "studiosixty4",
-    "found_at": "2026-07-30T21:33:40.056577+00:00",
+    "winner_name": "Reka",
+    "found_at": "2026-07-31T16:14:37.361659+00:00",
     "image_url": null
   }
 }
