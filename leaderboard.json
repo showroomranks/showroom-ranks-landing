@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-02T15:54:34.512434+00:00",
+  "generated_at": "2026-08-02T15:59:08.557001+00:00",
   "top5": [
     {
       "rank": 1,
@@ -8,38 +8,32 @@
     },
     {
       "rank": 2,
-      "name": "Reka",
+      "name": "Former Member (1441164398898053171)",
       "score": 2733
     },
     {
       "rank": 3,
-      "name": "studiosixty4",
+      "name": "Former Member (1386443431517356093)",
       "score": 2373
     },
     {
       "rank": 4,
-      "name": "SharkBait \ud83e\udd88",
+      "name": "MACAVELI",
       "score": 1238
     },
     {
       "rank": 5,
-      "name": "Ephwurd",
+      "name": "Former Member (697940616071479306)",
       "score": 1109
     }
   ],
-  "current_hunt": {
-    "item_name": "porky Pig",
-    "category": "tokens",
-    "points": 500,
-    "ends_at": "2026-08-03T14:22:15.324709+00:00",
-    "image_url": null
-  },
+  "current_hunt": null,
   "current_giveaway": null,
   "last_catch": {
-    "item_name": "Storm",
-    "category": "tokens",
-    "winner_name": "Cleo Le Cat",
-    "found_at": "2026-07-31T19:10:00.254035+00:00",
+    "item_name": "Daffy Duck",
+    "category": "shields",
+    "winner_name": "MACAVELI",
+    "found_at": "2026-08-02T09:27:44.039579+00:00",
     "image_url": null
   }
 }
