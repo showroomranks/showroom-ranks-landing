@@ -1,39 +1,39 @@
 {
-  "generated_at": "2026-08-31T02:21:32.413748+00:00",
+  "generated_at": "2026-08-31T02:24:03.531723+00:00",
   "top5": [
     {
       "rank": 1,
       "name": "Cleo Le Cat",
-      "score": 8016
+      "score": 7066
     },
     {
       "rank": 2,
-      "name": "Former Member (1441164398898053171)",
+      "name": "Reka",
       "score": 2733
     },
     {
       "rank": 3,
-      "name": "Former Member (1386443431517356093)",
+      "name": "studiosixty4",
       "score": 2373
     },
     {
       "rank": 4,
-      "name": "ShowRoom Ranks",
-      "score": 2012
+      "name": "SharkBait \ud83e\udd88",
+      "score": 1238
     },
     {
       "rank": 5,
-      "name": "MACAVELI",
-      "score": 1360
+      "name": "Ephwurd",
+      "score": 1109
     }
   ],
   "current_hunt": null,
   "current_giveaway": null,
   "last_catch": {
-    "item_name": "Daffy Duck",
-    "category": "shields",
-    "winner_name": "MACAVELI",
-    "found_at": "2026-08-02T09:27:44.039579+00:00",
-    "image_url": null
+    "item_name": "porky Pig",
+    "category": "tokens",
+    "winner_name": "studiosixty4",
+    "found_at": "2026-08-02T20:06:21.216877+00:00",
+    "image_url": "https://cdn.discordapp.com/attachments/1521363360975949874/1533566938746196111/found.jpg?ex=6a70f502&is=6a6fa382&hm=a03cac3cbf4c5275367a9d63cf89117b0bb9722c17773d8edfad75346bc6c2bb&"
   }
 }
